@@ -7,16 +7,19 @@ class TodoList extends React.Component{
     constructor(props){
         super(props)
         this.state={
-            data:[]
+            data:[],
+            time:[]
         }
     }
     render(){
-        this.state.data=this.props.data;
+        this.state.data=this.props.data
+        this.state.time=this.props.time
         let todo=this.state.data.map((item,index)=>{
             return (
                 <div key={index}>
                     <p>{item}</p>
-                    <a href="javascript:;" data-index={index} onClick={(e)=>this.delHandle(e)}>delete</a>
+                    <span className="time">{this.state.time[index]}</span>
+                    <span className="del" data-index={index} onClick={(e)=>this.delHandle(e)}></span>
                 </div>
             )
         })

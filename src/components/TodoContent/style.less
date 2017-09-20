@@ -5,16 +5,30 @@
         justify-content: space-around;
         input{
             outline: none;
-            width:60%;
+            width:70%;
             height:35px;
             text-indent: 1em;
             font-size:0.9rem;
+            color:rgba(0,0,0,.6)
         }
-        button{
-            padding:0 1rem;
+        span{
+            display: block;
+            width:36px;
+            height:36px;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: bolder;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: all 0.4s linear;
+        }
+        span:hover{
+            transform: scale(1.2);
+        }
+        .add{
+            background-image: url('../../static/images/add.png');
+        }
+        .delAll{
+            background-image: url('../../static/images/deleteAll.png');
         }
         margin-bottom:1rem;
     }

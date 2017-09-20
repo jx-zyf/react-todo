@@ -10233,7 +10233,7 @@ var _components = __webpack_require__(188);
 
 var _components2 = _interopRequireDefault(_components);
 
-__webpack_require__(201);
+__webpack_require__(204);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23202,7 +23202,7 @@ exports = module.exports = __webpack_require__(25)(undefined);
 
 
 // module
-exports.push([module.i, "header {\n  width: 100%;\n  margin: auto;\n  text-align: center;\n  display: flex;\n  justify-content: space-around;\n  align-items: center;\n  color: #fff;\n}\nheader .title {\n  font-size: 1.2rem;\n}\nheader .date span {\n  font-size: 1rem;\n  font-weight: bolder;\n}\nheader h2 {\n  font-size: 1.2rem;\n}\n", ""]);
+exports.push([module.i, "header {\n  width: 100%;\n  margin: auto;\n  text-align: center;\n  display: flex;\n  justify-content: space-around;\n  align-items: center;\n  color: #fff;\n}\nheader .title {\n  font-size: 1.2rem;\n  animation: logo 2s linear infinite;\n}\nheader .date span {\n  font-size: 1rem;\n  font-weight: bolder;\n}\nheader h2 {\n  font-size: 1.2rem;\n}\n@keyframes logo {\n  0% {\n    transform: scale(1);\n  }\n  50% {\n    transform: scale(1.2);\n  }\n  100% {\n    transform: scale(1);\n  }\n}\n", ""]);
 
 // exports
 
@@ -23232,7 +23232,7 @@ var _localStorage = __webpack_require__(84);
 
 var _localStorage2 = _interopRequireDefault(_localStorage);
 
-__webpack_require__(199);
+__webpack_require__(200);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -23252,7 +23252,8 @@ var TodoContent = function (_React$Component) {
 
         _this2.state = {
             value: '',
-            data: []
+            data: [],
+            time: []
         };
         return _this2;
     }
@@ -23274,6 +23275,7 @@ var TodoContent = function (_React$Component) {
             var _this3 = this;
 
             this.state.data = _localStorage2.default.fetch('message');
+            this.state.time = _localStorage2.default.fetch('time');
             return _react2.default.createElement(
                 'div',
                 { className: 'todoContent' },
@@ -23284,22 +23286,14 @@ var TodoContent = function (_React$Component) {
                         value: this.state.value, onChange: function onChange(e) {
                             return _this3.changeHandle(e);
                         } }),
-                    _react2.default.createElement(
-                        'button',
-                        { onClick: function onClick() {
-                                _this3.addTodo();
-                            } },
-                        'add'
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { onClick: function onClick() {
-                                _this3.delAll();
-                            } },
-                        'deleteAll'
-                    )
+                    _react2.default.createElement('span', { className: 'add', onClick: function onClick() {
+                            _this3.addTodo();
+                        } }),
+                    _react2.default.createElement('span', { className: 'delAll', onClick: function onClick() {
+                            _this3.delAll();
+                        } })
                 ),
-                _react2.default.createElement(_TodoList2.default, { data: this.state.data, delHandle: function delHandle(index) {
+                _react2.default.createElement(_TodoList2.default, { data: this.state.data, time: this.state.time, delHandle: function delHandle(index) {
                         return _this3.delHandle(index);
                     } })
             );
@@ -23317,8 +23311,13 @@ var TodoContent = function (_React$Component) {
             if (this.state.value === '') {
                 alert('please input content!');
             } else {
+                // 保存信息
                 this.state.data.unshift(this.state.value);
                 _localStorage2.default.save('message', this.state.data);
+                // 保存时间
+                this.state.time.unshift(this.getDate(new Date()));
+                _localStorage2.default.save('time', this.state.time);
+                // 清空搜索框
                 this.setState({ value: '' });
             }
         }
@@ -23328,8 +23327,12 @@ var TodoContent = function (_React$Component) {
         key: 'delHandle',
         value: function delHandle(index) {
             if (!confirm('Are you sure delete this?')) return;else {
+                // 删除信息
                 this.setState({ data: this.state.data.splice(index, 1) });
                 _localStorage2.default.save('message', this.state.data);
+                // 删除时间
+                this.setState({ time: this.state.time.splice(index, 1) });
+                _localStorage2.default.save('time', this.state.time);
             }
         }
         // 删除全部
@@ -23341,8 +23344,23 @@ var TodoContent = function (_React$Component) {
                 if (!confirm('Are you sure delete all?')) return;else {
                     this.setState({ data: this.state.data.splice(0, this.state.data.length) });
                     _localStorage2.default.save('message', this.state.data);
+                    this.setState({ time: this.state.time.splice(0, this.state.time.length) });
+                    _localStorage2.default.save('time', this.state.time);
                 }
             }
+        }
+    }, {
+        key: 'getDate',
+        value: function getDate(newDate) {
+            var setDate = newDate;
+            var year = setDate.getFullYear();
+            var month = setDate.getMonth() + 1 < 10 ? '0' + (setDate.getMonth() + 1) : setDate.getMonth() + 1;
+            var date = setDate.getDate() < 10 ? '0' + setDate.getDate() : setDate.getDate();
+            var hour = setDate.getHours() < 10 ? '0' + setDate.getHours() : setDate.getHours();
+            var minute = setDate.getMinutes() < 10 ? '0' + setDate.getMinutes() : setDate.getMinutes();
+            var second = setDate.getSeconds() < 10 ? '0' + setDate.getSeconds() : setDate.getSeconds();
+            var time = year + '-' + month + '-' + date + ' ' + hour + ':' + minute + ':' + second;
+            return time;
         }
     }]);
 
@@ -23391,7 +23409,8 @@ var TodoList = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (TodoList.__proto__ || Object.getPrototypeOf(TodoList)).call(this, props));
 
         _this.state = {
-            data: []
+            data: [],
+            time: []
         };
         return _this;
     }
@@ -23402,6 +23421,7 @@ var TodoList = function (_React$Component) {
             var _this2 = this;
 
             this.state.data = this.props.data;
+            this.state.time = this.props.time;
             var todo = this.state.data.map(function (item, index) {
                 return _react2.default.createElement(
                     'div',
@@ -23412,12 +23432,13 @@ var TodoList = function (_React$Component) {
                         item
                     ),
                     _react2.default.createElement(
-                        'a',
-                        { href: 'javascript:;', 'data-index': index, onClick: function onClick(e) {
-                                return _this2.delHandle(e);
-                            } },
-                        'delete'
-                    )
+                        'span',
+                        { className: 'time' },
+                        _this2.state.time[index]
+                    ),
+                    _react2.default.createElement('span', { className: 'del', 'data-index': index, onClick: function onClick(e) {
+                            return _this2.delHandle(e);
+                        } })
                 );
             });
             return _react2.default.createElement(
@@ -23479,19 +23500,25 @@ exports = module.exports = __webpack_require__(25)(undefined);
 
 
 // module
-exports.push([module.i, ".todos {\n  overflow: auto;\n  max-height: 80vh;\n  background-color: rgba(0, 0, 0, 0.1);\n  padding: 0 2vw;\n}\n.todos div {\n  border: 1px solid gray;\n  border-radius: 1rem;\n  display: flex;\n  justify-content: space-around;\n  align-items: center;\n  margin: 1rem 0;\n  padding: 1rem 0;\n  background-color: rgba(0, 0, 0, 0.2);\n}\n.todos div p {\n  width: 80%;\n  font-size: 0.9rem;\n  color: #fff;\n  line-height: 1.5rem;\n  text-indent: 1.5rem;\n  letter-spacing: 0.1rem;\n}\n.todos div a {\n  color: #fff;\n  font-size: 1rem;\n  text-decoration: none;\n}\n", ""]);
+exports.push([module.i, ".todos {\n  overflow: auto;\n  max-height: 80vh;\n  background-color: rgba(0, 0, 0, 0.1);\n  padding: 0 1.2vw;\n}\n.todos div {\n  border: 1px solid gray;\n  border-radius: 1rem;\n  display: flex;\n  justify-content: space-around;\n  align-items: center;\n  margin: 1rem 0;\n  background-color: rgba(0, 0, 0, 0.2);\n  position: relative;\n}\n.todos div p {\n  padding: 1.5rem 0;\n  width: 80%;\n  font-size: 0.9rem;\n  color: #fff;\n  line-height: 1.5rem;\n  text-indent: 1rem;\n  letter-spacing: 0.1rem;\n}\n.todos div .time {\n  color: #fff;\n  font-size: 0.8rem;\n  position: absolute;\n  top: 5px;\n  right: 13%;\n}\n.todos div .del {\n  display: block;\n  width: 36px;\n  height: 36px;\n  cursor: pointer;\n  background-size: 100% 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  background-image: url(" + __webpack_require__(199) + ");\n  transition: all 0.4s linear;\n}\n.todos div .del:hover {\n  transform: scale(1.2);\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
 /* 199 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAEJ0lEQVRoQ82ajZENQRSF74uADBCB3QgQASJABIgAESACRLBEgAisCKwIEAH1TfWZutOvZ+Z2T78pXTW1b3enb59z/7v7Hew046aZ3XCi/5jZ5SmWOnQQCtg7ZnbXzM7SMyf2ysx4vpjZpx6kthB4ZGaPE/BWPUDmvZm9NbPfLUJaCAD8pZmheQ1cBK3y4CrStMeEhZiDlfh8OwMMkee1RGoIsPC7zEU+mNnH9NQqEDLPkhWvpclYAeVgkdCIEnhqZm+cRICzEJreOq6b2YMkX0RQypOINSIE0Dq+zvietIar9B4QQUm4KAPlPFwL9CUCCLxwQYrWMXlTsFWwxRrEA9ZgrXtLJJYIAB5hDMyJ0L0G8YaVV0nMEfBuszd4KcmTwJ3OS9YvEcDfIcAgrfng3csCJRIENjExGTkBUts3M8P/qZRyob2B+/XAgDsXFZoTkN9TmCBz6oCNKgbt3094bnlcngDV8XOSiKmY9L8MPII4IKjJhkrr5gkAHhJfN/Y3NaQBFrWyYpP3RyuIAO7yI61M3o0UKhaHNGW/JcWSZZhPoojM91Z4lTqB0QJkGtqFn1mTtqRNWokX6YXaVCvwgKqJN+HEnbDCSADtY4WRWdAP0JxKf5REDh63jW52vKdQFy5xoaM/BsHrtRoSW8BrPcjSig/KhoCCA1Ni0pYRIdEDPNjkRkOygYB8eWv2WSLRCzwEpPAhDiBAxmFPSzah29wySiR6ggebr1cHT6A2gOeIehJYF6Uo29QE7Jx8ZP1K/zw/BQFkexL8Tnz1AC9Sf1WzIKCojqbBiIvhNjSFGr2sWySgGOi1iPd5T7angiYW6EmgFLDEQG2xW7Kyr1tDFpK/Trq8iJ9k7yxlm0idiC55lIV61IFIquxFAou+TickZ1jA73gixyy5piLgW9qOOYtoczN4DIB9Xq3dyNSA70WCGgDmISlI4wrkmjhoAb+VhPcW2ukrESjudlaiSk1Va5FSTHDahzIiQ3PGvk0EirudgERIIDTaz+ciSSDIiGwrffoca4oPWmWjyZ4zQGKvV6T9ya7RE/BW6NGZ9iTmc/+koudp0+9zhy1bTxSNsnR4QJwcxUsp76u5mz2PbATSOs2f0x4ptUTAH6pChmOWSJC1Alyat3pOO1d5/cSmu6sObDyG2fq01Dp4AXtbwl9pLe7V13ofTyJ05bNR8wQsPq9TcU7IwTDrwmsEwIMAio0u4PjM5qd3XAAa8DraCbU1EQKQoArSBepuF/AQab6gdpYix3NEyU8GrQktc+S8dHI6HbG+Thn8va7uiTF3dJDpOO/Huv7CHBmAD1/fRi3ggWFiFuEREf2frtbf0vNZAJmn71LkJ4AEKsqJnIpPlNRCQAJ0QY3vos3aQU+D9XDFsMbzRbYQyK2ib6ugca91H+yykH7Wkj56/x/UlTFQ1yA/xAAAAABJRU5ErkJggg=="
+
+/***/ }),
+/* 200 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(200);
+var content = __webpack_require__(201);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -23516,7 +23543,7 @@ if(false) {
 }
 
 /***/ }),
-/* 200 */
+/* 201 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(25)(undefined);
@@ -23524,19 +23551,31 @@ exports = module.exports = __webpack_require__(25)(undefined);
 
 
 // module
-exports.push([module.i, ".todoContent {\n  margin: 2rem 0;\n}\n.todoContent .todoContentHead {\n  display: flex;\n  justify-content: space-around;\n  margin-bottom: 1rem;\n}\n.todoContent .todoContentHead input {\n  outline: none;\n  width: 60%;\n  height: 35px;\n  text-indent: 1em;\n  font-size: 0.9rem;\n}\n.todoContent .todoContentHead button {\n  padding: 0 1rem;\n  cursor: pointer;\n  font-size: 1rem;\n  font-weight: bolder;\n}\n", ""]);
+exports.push([module.i, ".todoContent {\n  margin: 2rem 0;\n}\n.todoContent .todoContentHead {\n  display: flex;\n  justify-content: space-around;\n  margin-bottom: 1rem;\n}\n.todoContent .todoContentHead input {\n  outline: none;\n  width: 70%;\n  height: 35px;\n  text-indent: 1em;\n  font-size: 0.9rem;\n  color: rgba(0, 0, 0, 0.6);\n}\n.todoContent .todoContentHead span {\n  display: block;\n  width: 36px;\n  height: 36px;\n  cursor: pointer;\n  background-size: 100% 100%;\n  background-repeat: no-repeat;\n  background-position: center;\n  transition: all 0.4s linear;\n}\n.todoContent .todoContentHead span:hover {\n  transform: scale(1.2);\n}\n.todoContent .todoContentHead .add {\n  background-image: url(" + __webpack_require__(202) + ");\n}\n.todoContent .todoContentHead .delAll {\n  background-image: url(" + __webpack_require__(203) + ");\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 201 */
+/* 202 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAADlklEQVRoQ92ajXHUQAyFlQogFQAVkFQAVACpIKECoAKgAqACSAUkFSQdABUAFQAVwHwePc/G5z3vj8zkbmc8ucydZT3p6We1PrCYddfMnprZfTN77H/5nK4fZsZ17X8vzex37+MPOgSg9KmZnZnZkcv55sp9zcjldwB76N/zu09mdt4KpgUACrxwxQGBJVECy5ZalPue+YXnuA8ZH9wAxXatBfDazF6aGfe996tU6ZxSgEEm11+X+bYUQSkAXP/RqYKV3lRYu1QXgCAX70KtkxJvlACA4+/M7KfTJsfvOUXxGKvYom4k6HTPzF45tbJGWAKA8lieIMPFtXSBEqyl50wVxBtQlCTxfBuIbYJT5fncsloB6Fl4YiuIHIAI5VGiFwAyBIKYuJhacQ4AAXvl6bHV8npOBACBIN0eTwN7DsAX5ywVtZbzUwNFASAmqDPIA8S4pgBIY2QOflSTbXLxEQUA+TAD45LR0HMjO1Bh+YEyTkvQruUByVVmGqmUeoAv4TxAeqkTHQOSB5VoCNF18IIA8MV370VG9wS4IJJCUkfV+gGGFgCKFNX2MND6UWl0rsj9UoETALhPq0CHGLnW8AD6UQ9oNY4BAH1ANFsoOtGsBUCF9hAA4z/B9FmLQsgdja6+nqKlXVWn0W/cvpYHeAh16gIA2klF839NDyAbvYc0SvqkeEWmz7XqQOpe9D0FAG6+UZ4DObQmhYa2JwdAPVEglm5RUyPvN4Buc7mA/0IhmiN2PbsYxGd7kUZpTR9NdzpBHFqTQvRvl7vaSrBnoX6d7EUzp76CYI5uJ9aiEO00Xjjamw3Nxl7zFgcx6Z4d5LB3n27qGeMNe81bCmBj754CAJFOTEAYsaJjQJMT9i7E7MbUeKcHW7I4XsByTwKoFOUBqEPh+jPdOc7NRkWlzz666KFSFADOKBg6jNSRUkvjdZo8DhhaVwQAlGfwUDxel7KaVvSA6AUg5bOnNEtHPykIzqtq02srADjPpJDnNx8xyRO0F3iB5glhNWN37TFq9hrwnPhjzAmAjVOZlM9LHtBvCWwEccJOLmZ/WuuNpTjC6jqH5sQfww25ftsqBSAZKuM6kObMuBcIinM2nB6gF3usFgBA8AYPw7133DN4p+blDb0cotcNyO94FqouWr2FQnNeRAlAcKUvb+CRYWo2sxhhcl/6cgiKY4AmT7Z4IAdG81W9bsP4O12M7/W6DYmg5uWQbBj8Awyo9ix2eZjwAAAAAElFTkSuQmCC"
+
+/***/ }),
+/* 203 */
+/***/ (function(module, exports) {
+
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAACBElEQVRoQ+1a0TUFMRC9rwI6QAWoABXQASpABzpABaiADlABKkAHVMC5T/LOmLe7SSbZ83BmfvZjdyZzJzeTmWQnqJdtAEcA+FzONPcO4B7ARXhmqs1/NjFrfiseAListHEI4MpqowbAKoDHgqj3+cjZ2ATwagFRA4BR27cM2qFzHWaz2JwVALn+oqJ/AuA804NjAGfiW87CGgA+i8QKQDvwYaASnV0S3pYEYKZmBcDocw1EYTYhqBLhbDF7ReEa4CwUiQXAHoAbNQoHLl2EDAADIWWnNK1GAK0ySlH0Kj6eZa4IgJvQXYXBRahOZ+vfACCFnlRWWERUc8dk1tvguutbxJpSD6HWyR2gxXeslbaEoc4F7gBahLrHhs+ATKu+BgxUG51Csh7iYMwSUtgrMNVRmKJZ80vhDDPbUbrqoFEBdO3cOqN9KodT73WadABDi9hnAICmmFNIrrlULeQUcgoFvlirUaeQU8gpNH+Kkap1Uu99I/ONTJXPXk6Peazy5zey2AauBNp0Nf1sI9fD+2fRXkamyY7rTR3X85tROzJDj16s4gD8XKiYND8VmlKIpi3XUTUYUj3z1PaQU9qA6RbRiEDfgvb6OgTgFsCu0YHWar0X4UMAeCzI48HfIDyW5L4yJylet/iZozYAgz+DpABwcJYNvJSOu2qtQ7n63N1PU/fGXzNvAUCb9f7bAAAAAElFTkSuQmCC"
+
+/***/ }),
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(202);
+var content = __webpack_require__(205);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -23561,7 +23600,7 @@ if(false) {
 }
 
 /***/ }),
-/* 202 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(25)(undefined);
@@ -23569,13 +23608,13 @@ exports = module.exports = __webpack_require__(25)(undefined);
 
 
 // module
-exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n* body {\n  width: 100vw;\n  height: 100vh;\n  background-image: url(" + __webpack_require__(203) + ");\n  background-size: 100% 100%;\n  background-position: center center;\n  background-repeat: no-repeat;\n}\n* body #app {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n", ""]);
+exports.push([module.i, "* {\n  margin: 0;\n  padding: 0;\n  box-sizing: border-box;\n}\n* body {\n  width: 100vw;\n  height: 100vh;\n  background-image: url(" + __webpack_require__(206) + ");\n  background-size: cover;\n}\n* body #app {\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 203 */
+/* 206 */
 /***/ (function(module, exports) {
 
 module.exports = "./dist/images/bg.jpg";

@@ -8,6 +8,7 @@ header{
     color:#fff;
     .title{
         font-size: 1.2rem;
+        animation: logo 2s linear infinite;
     }
     .date{
         span{
@@ -17,5 +18,16 @@ header{
     }
     h2{
         font-size: 1.2rem;
+    }
+    @keyframes logo {
+        0%{
+            transform: scale(1)
+        }
+        50%{
+            transform: scale(1.2)
+        }
+        100%{
+            transform: scale(1)
+        }
     }
 }

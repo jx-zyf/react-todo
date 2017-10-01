@@ -23150,7 +23150,7 @@ var TodoHeader = function (_React$Component) {
             var dateObj = {
                 year: setDate.getFullYear(),
                 month: monthArray[setDate.getMonth()],
-                day: setDate.getDate(),
+                day: setDate.getDate() < 10 ? '0' + setDate.getDate() : setDate.getDate(),
                 week: weekArray[setDate.getDay()]
             };
             return dateObj;

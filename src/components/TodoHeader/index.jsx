@@ -18,7 +18,7 @@ class TodoHeader extends React.Component{
     }
     getDate(newDate) {
         let setDate = newDate;
-        let monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov.', 'Dec']
+        let monthArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         let weekArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY']
         let dateObj = {
             year: setDate.getFullYear(), 
